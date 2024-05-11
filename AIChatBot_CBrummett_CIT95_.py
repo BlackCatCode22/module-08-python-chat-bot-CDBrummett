@@ -1,59 +1,37 @@
-from dotenv import load_dotenv
+# Import necessary libraries
 import os
 import openai
+from dotenv import load_dotenv
 
+# Load environment variables from .env file
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
-class Chatbot:
-    def __init__(self):
-        self.memory = []
+# Set OpenAI API key from environment variable
+openai.api_key = os.getenv("openaiAPI")
 
-    def generate_response(self, user_input: str) -> str:
-        try:
-            # Create a new message with the user's input
-            new_message = {"role": "user", "content": user_input}
+# Function to create a chat completion using the OpenAI API
+def create_chat_completion(model, messages):
+    # Call the OpenAI API to generate a response
+    completions = openai.ChatCompletion.create(
+        model=model,
+        messages=messages
+    )
+    # Return the generated response
+    return completions.choices[0].message
 
-            # Add the new message to the conversation memory
-            self.memory.append(new_message)
+# Set the model to use for generating responses
+model = "gpt-3.5-turbo"
 
-            # Create a system message to provide context for the model
-            system_message = {"role": "system", "content": "You are a helpful assistant and you explain all things python completely."}
+# Create a list of messages to send to the model
+messages = [
+    # Create a system message to provide context for the model
+    {"role": "system", "content": "You are a wonderful assistant and you explain all things python completely."},
+    # Create a user message with a question for the model
+    {"role": "user", "content": "Teach me about lists in python and write sample code."}
+]
 
-            # Create a list of messages to send to the model
-            messages = [system_message] + self.memory
+# Call the create_chat_completion function to generate a response
+response = create_chat_completion(model, messages)
 
-            # Call the OpenAI API to generate a response
-            completion = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=messages
-            )
-
-            # Extract the text of the response
-            response_text = completion.choices[0].message.content
-
-            # Add the response to the conversation memory
-            self.memory.append({"role": "assistant", "content": response_text})
-
-            return response_text
-        except openai.OpenAIError as e:
-            logging.error("Error generating response:", e)
-            raise
-
-    def run_chatbot(self) -> None:
-        print("Welcome to the chatbot! Type 'quit' to exit.")
-        while True:
-            user_input = input("You: ")
-            if user_input.lower() == "quit":
-                print("Exiting chatbot.")
-                break
-            try:
-                response = self.generate_response(user_input)
-                print("Assistant:", response)
-            except openai.OpenAIError as e:
-                logging.error("Error generating response:", e)
-                print("Error:", e)
-
-if __name__ == "__main__":
-    chatbot = Chatbot()
-    chatbot.run_chatbot()
+# Print the generated response
+print(response)
