@@ -1,37 +1,30 @@
-# Import necessary libraries
-import os
-import openai
-from dotenv import load_dotenv
+import streamlit as st  # Import the Streamlit library for building the user interface
+import openai  # Import the OpenAI library for interacting with the OpenAI API
+from dotenv import load_dotenv  # Import the dotenv library for loading environment variables from a .env file
+import os  # Import the os library for interacting with the operating system
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv() 
 
-# Set OpenAI API key from environment variable
-openai.api_key = os.getenv("openaiAPI")
+# Retrieve the API key from environment variables
+api_key = os.getenv('OPENAI_API_KEY')
 
-# Function to create a chat completion using the OpenAI API
-def create_chat_completion(model, messages):
-    # Call the OpenAI API to generate a response
-    completions = openai.ChatCompletion.create(
-        model=model,
-        messages=messages
+# Configure the OpenAI library with your API key
+openai.api_key = api_key
+
+# Initialize Streamlit application
+st.title("Python Programming Assistant")  # Set the title of the Streamlit app
+user_input = st.text_input("Ask me anything about Python programming:", "")  # Create a text input field for the user to enter their question
+st.write("Your question:", user_input)  # Display the user's question on the screen
+
+client = OpenAI()  # Create an instance of the OpenAI client
+
+if user_input:  # Check if the user has entered a question
+    completion = client.chat.completions.create(  # Call the OpenAI API to generate a response to the user's question
+        model="gpt-3.5-turbo",  # Set the model to use for generating the response
+        messages=[
+            {"role": "user", "content": user_input},  # Set the user's question as the content of the message
+        ]
     )
-    # Return the generated response
-    return completions.choices[0].message
-
-# Set the model to use for generating responses
-model = "gpt-3.5-turbo"
-
-# Create a list of messages to send to the model
-messages = [
-    # Create a system message to provide context for the model
-    {"role": "system", "content": "You are a wonderful assistant and you explain all things python completely."},
-    # Create a user message with a question for the model
-    {"role": "user", "content": "Teach me about lists in python and write sample code."}
-]
-
-# Call the create_chat_completion function to generate a response
-response = create_chat_completion(model, messages)
-
-# Print the generated response
-print(response)
+    answer = completion.choices[0].message.content
+    st.write(answer)  # Display the generated response on the screen
