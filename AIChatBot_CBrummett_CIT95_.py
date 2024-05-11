@@ -1,12 +1,12 @@
-# pip install python-dontenv openai
-# pip install --upgrade openai
-# pip install --upgrade pythondotenv
+from dotenv import load_dotenv
+import os
 import openai
 
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 class Chatbot:
-    def __init__(self, api_key: str):
-        self.api_key = api_key
+    def __init__(self):
         self.memory = []
 
     def generate_response(self, user_input: str) -> str:
@@ -18,15 +18,14 @@ class Chatbot:
             self.memory.append(new_message)
 
             # Create a system message to provide context for the model
-            system_message = {"role": "system", "content": "Assume the role of a Python teacher, and think step by step. Your name is Skippy Py."}
+            system_message = {"role": "system", "content": "You are a helpful assistant and you explain all things python completely."}
 
             # Create a list of messages to send to the model
             messages = [system_message] + self.memory
 
             # Call the OpenAI API to generate a response
-            completion = client.chat.completions.create.create(
+            completion = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
-                api_key=self.api_key,
                 messages=messages
             )
 
@@ -38,7 +37,8 @@ class Chatbot:
 
             return response_text
         except openai.OpenAIError as e:
-            raise Exception("Error generating response:", e)
+            logging.error("Error generating response:", e)
+            raise
 
     def run_chatbot(self) -> None:
         print("Welcome to the chatbot! Type 'quit' to exit.")
@@ -50,18 +50,10 @@ class Chatbot:
             try:
                 response = self.generate_response(user_input)
                 print("Assistant:", response)
-            except Exception as e:
+            except openai.OpenAIError as e:
+                logging.error("Error generating response:", e)
                 print("Error:", e)
 
-
-def main() -> None:
-    try:
-        api_key = "OPENAI_API_KEY"
-        chatbot = Chatbot(api_key)
-        chatbot.run_chatbot()
-    except ValueError as e:
-        print("Error:", e)
-
-
 if __name__ == "__main__":
-    main()
+    chatbot = Chatbot()
+    chatbot.run_chatbot()
