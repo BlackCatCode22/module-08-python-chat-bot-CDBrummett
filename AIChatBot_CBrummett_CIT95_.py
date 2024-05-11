@@ -40,7 +40,7 @@ def run_chatbot(api_key):
 
 
 def main():
-    api_key = os.environ.get("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")
+    api_key = os.environ.get("sk-proj-4MFBj8ah1WdYMt1GRSYHT3BlbkFJFAFjRbC1TVsAcpM5CLQ0")
     if not api_key:
         print("Error: OPENAI_API_KEY environment variable is not set.")
         return
