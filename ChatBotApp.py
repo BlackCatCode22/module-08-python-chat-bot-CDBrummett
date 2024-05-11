@@ -39,7 +39,7 @@ def main():
     # your app and have thousands of users) Typically, your API key will be in another Python file that
     # GitHub will not fork when asked to download
     # https://platform.openai.com/api-keys
-    openai.api_key = "sk-proj-IVjY4guzsBQhq1y3ONJXT3BlbkFJHxJp9H1mDHmTMs0GYKUi"
+    openai.api_key = "CtDAv3vpapaeHnCQSLcCT3BlbkFJ4MUAbuXgyWws3611bUWV"
 
     # Print a welcome message
     print("\nWelcome to the Python Study Bot! Type 'quit' to exit.\n")
